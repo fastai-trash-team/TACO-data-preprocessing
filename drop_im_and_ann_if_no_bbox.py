@@ -1,3 +1,7 @@
+########################################
+# 1. Drop annotations file + the image if annotations file is empty
+########################################
+
 import os
 from os.path import exists
 
