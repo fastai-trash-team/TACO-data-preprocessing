@@ -1,4 +1,20 @@
+########################################
+# 1. Convert the COCO files into a yolo format, which has one .txt file containing all bboxes for the image. 
+#    The filename of the label should match the one of the image.
+# 2. Merge certain classes, and assign class id 16 for labels to be dropped altogether
+#    The corresponding classes can be found in taco_yolo.yaml
+########################################
+
+import os
+from os.path import exists
 import json
+
+# base_path should be the TACO folder
+base_path = './'
+
+# We're putting the new yolov5 annotations in a folder called labels
+if not exists(base_path + 'labels'):
+    os.mkdir(base_path + 'labels')
 
 class_to_merged_class = {
     0:6,
@@ -62,7 +78,9 @@ class_to_merged_class = {
     58:16,
     59:15
 }
-batch_anns = 'data/annotations.json'
+
+batch_anns = f'{base_path}data/annotations.json'
+
 with open(batch_anns, 'r') as f:
     dataset_batch = json.loads(f.read())
 for o in dataset_batch['annotations']:
@@ -91,6 +109,6 @@ for o in dataset_batch['annotations']:
     bbox_line = '{} {} {} {} {}\n'.format(cat_idx, center_x, center_y, width, height)
     #     print(bbox_line)
     # Write the annotation files
-    f = open(f'labels/{fname}', 'a')
+    f = open(f'{base_path}labels/{fname}', 'a')
     f.write(bbox_line)
     f.close()
