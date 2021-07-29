@@ -1,5 +1,13 @@
+########################################
+# 1. Move images to one folder and rename them, the renaming format is already reflected in the yolov5 annotations creation script
+########################################
+
 import shutil
 import os
+from os.path import exists
+
+if not exists(base_path + 'images'):
+    os.mkdir(base_path + 'images')
 
 batch_id = 1
 while batch_id < 16:
