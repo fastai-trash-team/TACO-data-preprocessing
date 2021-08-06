@@ -79,36 +79,43 @@ class_to_merged_class = {
     59:15
 }
 
-batch_anns = f'{base_path}data/annotations.json'
+anns_path = f'{base_path}data/annotations.json'
 
-with open(batch_anns, 'r') as f:
-    dataset_batch = json.loads(f.read())
-for o in dataset_batch['annotations']:
-    fname = dataset_batch['images'][o['image_id']]['file_name']
-    fname = fname.split('.')[0] + 'txt'
-    fname = fname.replace('atch_', '').replace('/', '_')
-    image_w = dataset_batch['images'][o['image_id']]['width']
-    image_h = dataset_batch['images'][o['image_id']]['height']
-    # Grab bbox info 
-    bbox = o['bbox']
-    top_x, top_y, width, height = bbox
-    # Change x and y from topleft to center
-    center_x = top_x + (width/2)
-    center_y = top_y + (height/2)
-    # Normalize bbox values
-    center_x /= image_w
-    center_y /= image_h
-    width /= image_w
-    height /= image_h
-    # Grab the category or supercategory, comment out whichever you don't want. Make sure to update the yaml config file to reflect the correct list of classes
-    cat_idx = o['category_id']
-    cat_idx = class_to_merged_class[cat_idx]
-    # supercat_name = dataset_batch['categories'][o['category_id']]['supercategory']
-    # cat_idx = ordered_supercats.index(supercat_name)
-    # Put category and 4 bbox values on one line for Yolov5 compatibility
-    bbox_line = '{} {} {} {} {}\n'.format(cat_idx, center_x, center_y, width, height)
-    #     print(bbox_line)
-    # Write the annotation files
-    f = open(f'{base_path}labels/{fname}', 'a')
-    f.write(bbox_line)
+def create_yolo_labels(annotations_path):
+    
+    with open(annotations_path, 'r') as f:
+        dataset_batch = json.loads(f.read())
+        
+    for o in dataset_batch['annotations']:
+        fname = dataset_batch['images'][o['image_id']]['file_name']
+        fname = fname.split('.')[0] + '.txt'
+        fname = fname.replace('atch_', '').replace('/', '_')
+        image_w = dataset_batch['images'][o['image_id']]['width']
+        image_h = dataset_batch['images'][o['image_id']]['height']
+        # Grab bbox info 
+        bbox = o['bbox']
+        top_x, top_y, width, height = bbox
+        # Change x and y from topleft to center
+        center_x = top_x + (width/2)
+        center_y = top_y + (height/2)
+        # Normalize bbox values
+        center_x /= image_w
+        center_y /= image_h
+        width /= image_w
+        height /= image_h
+        # Grab the category or supercategory, comment out whichever you don't want. Make sure to update the yaml config file to reflect the correct list of classes
+        cat_idx = o['category_id']
+        cat_idx = class_to_merged_class[cat_idx]
+        # supercat_name = dataset_batch['categories'][o['category_id']]['supercategory']
+        # cat_idx = ordered_supercats.index(supercat_name)
+        # Put category and 4 bbox values on one line for Yolov5 compatibility
+        bbox_line = f'{cat_idx} {center_x} {center_y} {width} {height}\n'
+        #     print(bbox_line)
+        # Write the annotation files
+        ann_txt = open(f'{base_path}labels/{fname}', 'a')
+        ann_txt.write(bbox_line)
+        ann_txt.close()
+        
     f.close()
+        
+create_yolo_labels(anns_path)
