@@ -41,7 +41,7 @@ def drop_label(cat_id):
         file2 = open(file, 'w')
         
         for line in file_:
-            if not (line.startswith(str(cat_id))): #TODO: This wouldn't work if cat id was 1 as it would also ignore 1, 10, 11, 12, ... Instead we should split on ' ' and check the first value
+            if line.split(' ')[0] != str(cat_id):
                 file2.writelines(line)
 
         file2.close()
