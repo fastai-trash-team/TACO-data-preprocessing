@@ -85,7 +85,7 @@ with open(batch_anns, 'r') as f:
     dataset_batch = json.loads(f.read())
 for o in dataset_batch['annotations']:
     fname = dataset_batch['images'][o['image_id']]['file_name']
-    fname = fname[:-3] + 'txt'
+    fname = fname.split('.')[0] + 'txt'
     fname = fname.replace('atch_', '').replace('/', '_')
     image_w = dataset_batch['images'][o['image_id']]['width']
     image_h = dataset_batch['images'][o['image_id']]['height']
